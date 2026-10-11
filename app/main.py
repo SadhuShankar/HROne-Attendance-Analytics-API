@@ -827,7 +827,15 @@ def regularize_attendance(
         elif key == "half_day":
             old_value = bool(old_value)
 
-        if old_value != new_value:
+        if key in ("punch_in", "punch_out"):
+            
+            old_compare = to_ms(old_value)
+            new_compare = to_ms(new_value)
+        else:
+            old_compare = old_value
+            new_compare = new_value
+
+        if old_compare != new_compare:
             changes[key] = {
                 "from": old_value,
                 "to": new_value,
@@ -1028,7 +1036,7 @@ def employee_monthly(
         "total_late_minutes": result.get("total_late_minutes", 0),
         "total_overtime_minutes": result.get("total_overtime_minutes", 0),
         "attendance_pct": (
-            round_half_up(present_days / working_days * 100, 2)
+            round_half_up(present_days / working_days * 100, 4)
             if working_days
             else None
         ),
