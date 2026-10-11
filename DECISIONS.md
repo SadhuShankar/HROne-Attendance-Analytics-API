@@ -4,7 +4,7 @@
 
 2. **Punch-in race.** Two identical requests can both check for an existing record before either inserts. The unique `(emp_code, date)` index ensures that only one record can be stored. The other request must be handled as a duplicate-key conflict rather than creating a second record.
 
-3. **Ties.** The leaderboard uses ranking by late minutes and then sorts by employee code for stable ordering. Employees tied at the cutoff may be affected by the limit, so the returned list contains at most the requested number of employees.
+3. **Leaderboard ties.** The leaderboard uses MongoDB `$rank` over total late minutes in descending order. Employees with equal totals receive the same rank, and the next rank is skipped (for example, 1, 1, 3). Filtering by rank rather than limiting the number of rows preserves all employees tied at the cutoff, so the result may contain more rows than the requested limit.
 
 4. **Headcount.** The department summary starts from employees who joined by the end of the month and looks up their attendance logs. Employees with no matching logs remain in the results and are counted.
 
